@@ -266,8 +266,6 @@ def predict():
             "error": f"Birth Weight: {data['Birth Weight']} must be a positive integer"
         }), 200
 
-
-
     input_data = {col: data.get(col) for col in columns}
     input_df = pd.DataFrame([input_data]).astype(dtypes)
 
@@ -297,8 +295,6 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-   
-
 @app.route('/update', methods=['POST'])
 def update():
     obs = request.get_json()
