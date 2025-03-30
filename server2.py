@@ -272,31 +272,31 @@ def predict():
     input_df = pd.DataFrame([input_data]).astype(dtypes)
 
     try:
-        prediction = int(pipeline.predict(input_df)[0])
-        #proba = pipeline.predict_proba(input_df)[0]#
-     
-        p = Prediction.create(
-            observation_id=observation_id,
-            observation=json.dumps(data),
-            true_value=prediction
-        )
-        try:
-            p.save()
-            print("Salvo com sucesso!")
-        except IntegrityError:
-            return jsonify({"error": f"Observation ID: '{observation_id}' already exists", "observation_id": observation_id}), 200 
+        # Generate prediction first
+        prediction = int(pipeline.predict(input_df)[0])  # <-- PREDICTION HAPPENS HERE
 
-        # Retornar a resposta com a predição e a probabilidade
-        response = {
+        # Then check if record exists and update/create
+        try:
+            p = Prediction.get(Prediction.observation_id == observation_id)
+            # Update existing record
+            p.observation = json.dumps(data)
+            p.prediction = prediction  # <-- Store prediction (not true_value!)
+            p.save()
+        except Prediction.DoesNotExist:
+            # Create new record
+            p = Prediction.create(
+                observation_id=observation_id,
+                observation=json.dumps(data),
+                prediction=prediction  # <-- Store prediction (not true_value!)
+            )
+
+        return jsonify({
             "observation_id": observation_id,
             "prediction": prediction
-        }
-        return jsonify(response), 200 
+        }), 200
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred during prediction: {str(e)}", "observation_id": observation_id}), 200  # Return 200 OK with error
-    
-
+        return jsonify({"error": str(e)}), 400
    
 
 @app.route('/update', methods=['POST'])
