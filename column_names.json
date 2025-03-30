@@ -1,0 +1,16 @@
+[
+    "Facility Id",
+    "Age Group",
+    "Gender",
+    "Race",
+    "Ethnicity",
+    "Type of Admission",
+    "CCS Diagnosis Code",
+    "CCS Procedure Code",
+    "APR DRG Code",
+    "APR MDC Code",
+    "APR Severity of Illness Code",
+    "APR Risk of Mortality",
+    "Birth Weight",
+    "Abortion Edit Indicator"
+]
